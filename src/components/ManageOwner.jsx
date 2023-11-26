@@ -13,12 +13,23 @@ import useStore from "../store/dataStore";
 import { Container, Typography } from "@mui/material";
 import { useState } from "react";
 
+import useLoginStore from "../store/loginStore";
+
 export function ManageOwner() {
     const { getOwnerName, getShoppingList, changeOwner } = useStore();
     const [ownerNameOption, setOwnerNameOption] = useState(getOwnerName());
     const [open, setOpen] = useState(false);
-    const members = getShoppingList().members;
-    const owner = getOwnerName();
+    // const members = getShoppingList().members;
+    // const owner = getOwnerName();
+
+    const shoppingList = getShoppingList();
+
+    const { getLoginInfo } = useLoginStore();
+    const owner = getLoginInfo();
+    const ownerName = owner.name;
+
+    console.log(shoppingList);
+    const members = shoppingList.members;
 
     const handleChange = (event) => {
         setOwnerNameOption(event.target.value);
@@ -43,7 +54,7 @@ export function ManageOwner() {
     return (
         <Container maxWidth="sm" sx={{ mt: 4 }}>
             <Typography variant="h4" component="h1">
-                Owner: {owner}
+                Owner: {ownerName}
             </Typography>
 
             <Button onClick={handleClickOpen} variant="contained">

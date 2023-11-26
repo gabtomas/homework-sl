@@ -9,12 +9,26 @@ import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { Box, Button } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { useState } from "react";
-import useStore from "../store/dataStore";
+import { useEffect, useState } from "react";
+import useDataStore from "../store/dataStore";
 import { TableListItem } from "./TableListItem";
+import { useParams } from "react-router-dom";
 
 export function ShoppingListTable() {
-    const { shoppingList, deleteItem, toggleItem, getDoneItems } = useStore();
+    const {
+        shoppingList,
+        deleteItem,
+        toggleItem,
+        getDoneItems,
+        selectObjectById,
+    } = useDataStore();
+
+    const { id } = useParams();
+
+    useEffect(() => {
+        selectObjectById(parseInt(id, 10));
+        console.log("useffect");
+    }, []);
 
     const [filteredState, setFilteredState] = useState(false);
 
@@ -39,6 +53,7 @@ export function ShoppingListTable() {
     function handleChange() {
         setFilteredState(!filteredState);
     }
+
     return (
         <Box>
             <TableContainer component={Paper}>

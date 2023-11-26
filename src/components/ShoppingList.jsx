@@ -1,21 +1,33 @@
 import { Button, Grid } from "@mui/material";
 import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import useStore from "../store/dataStore";
 import { ShoppingListTable } from "./ShoppingListTable";
 import { ShoppingListItemForm } from "./ShoppingListItemForm";
 import { ManageOwner } from "./ManageOwner";
 import { ManageUsers } from "./ManageUsers";
 import { ChangeListName } from "./ChangeListName";
+import useStore from "../store/dataStore";
 import useLoginStore from "../store/loginStore";
 
 export function ShoppingList() {
-    const { deleteList } = useStore();
-    const { getRole } = useLoginStore();
-
-    const role = getRole();
+    const { deleteList, leaveList } = useStore();
 
     const navigate = useNavigate();
+
+    const { getLoginInfo } = useLoginStore();
+
+    //check if currently logged in user is owner of the list
+    const owner = getLoginInfo();
+    const ownerId = owner.id;
+    const { getShoppingList } = useStore();
+    const shoppingList = getShoppingList();
+    const shoppingListOwnerId = shoppingList.owner;
+    let role = "";
+    if (ownerId === shoppingListOwnerId) {
+        role = "owner";
+    } else {
+        role = "member";
+    }
 
     if (role === "owner") {
         return (
@@ -104,7 +116,7 @@ export function ShoppingList() {
                             </Grid>
 
                             <Grid item xs={12} mt={2}>
-                                <ManageUsers />
+                                {/* <ManageUsers /> */}
                             </Grid>
                         </Grid>
                     </Grid>
@@ -172,11 +184,11 @@ export function ShoppingList() {
                                     variant="contained"
                                     size="large"
                                     onClick={() => {
-                                        deleteList();
+                                        leaveList();
                                         navigate("/home");
                                     }}
                                 >
-                                    Delete list
+                                    Leave list
                                 </Button>
                             </Grid>
                             <Grid

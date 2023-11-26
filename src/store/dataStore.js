@@ -1,74 +1,46 @@
 import create from "zustand";
 
-const useStore = create((set) => ({
+import useDataStoreMultiple from "./dataStoreMultiple";
+import useLoginStore from "./loginStore";
+
+const { getLoginInfo } = useLoginStore;
+
+//get id of the list from url
+
+const useDataStore = create((set, get) => ({
     shoppingList: {
-        id: 1,
-        name: "Běžný nákup potravin",
-        owner: {
-            id: 1,
-            name: "Igor",
-        },
-        members: [
-            {
-                id: 1,
-                name: "Petr",
-            },
-            {
-                id: 2,
-                name: "Jana",
-            },
-            {
-                id: 3,
-                name: "Karel",
-            },
-            {
-                id: 4,
-                name: "Marie",
-            },
-        ],
-        items: [
-            {
-                id: 1,
-                name: "Mléko",
-                done: true,
-            },
-            {
-                id: 2,
-                name: "Chléb",
-                done: false,
-            },
-            {
-                id: 3,
-                name: "Máslo",
-                done: true,
-            },
-            {
-                id: 4,
-                name: "Kuřecí prsa",
-                done: true,
-            },
-            {
-                id: 5,
-                name: "Rýže",
-                done: false,
-            },
-            {
-                id: 6,
-                name: "Těstoviny",
-                done: true,
-            },
-        ],
+        name: "",
+        items: [],
+        members: [],
+        owner: "",
     },
 
+    //get owner name from loginStore by id, id should be same is owner id in shopping list
+    getOwnerName: (id) => {
+        const ownerId = getLoginInfo("65623505c762eedb195f025d");
+        const owner = useDataStoreMultiple
+            .getState()
+            .shoppingLists.filter((list) => list.owner === ownerId);
+        return owner[0].owner.name;
+    },
+
+    //function to get get shopping list
     getShoppingList: () => {
-        return useStore.getState().shoppingList;
+        return useDataStore.getState().shoppingList;
+    },
+
+    selectObjectById: (id) => {
+        const object = useDataStoreMultiple
+            .getState()
+            .shoppingLists.find((item) => item.id === id);
+        set({ shoppingList: object });
     },
 
     //function to get items that have done property set to false
     getDoneItems: () => {
-        return useStore
+        return useDataStore
             .getState()
-            .shoppingList.items.filter((item) => item.done !== true);
+            .shoppingList.items.filter((item) => item.done);
     },
 
     //function for handling 'done' checkbox
@@ -85,7 +57,7 @@ const useStore = create((set) => ({
 
     //function to get owner name
     getOwnerName: () => {
-        return useStore.getState().shoppingList.owner.name;
+        return useDataStore.getState().shoppingList.owner.name;
     },
 
     //function to change owner of the list from members array using dropdown
@@ -101,11 +73,6 @@ const useStore = create((set) => ({
         }));
     },
 
-    //function to get current name of the list
-    getListName: () => {
-        return useStore.getState().shoppingList.name;
-    },
-
     //function to change name of the list
     changeListName: (newName) => {
         set((state) => ({
@@ -118,14 +85,74 @@ const useStore = create((set) => ({
 
     //function to get members array
     getMembers: () => {
-        return useStore.getState().shoppingList.members;
+        return useDataStore.getState().shoppingList.members;
     },
 
     //function to get members names
     getMembersNames: () => {
-        return useStore
-            .getState()
-            .shoppingList.members.map((member) => member.name);
+        return {
+            id: 1,
+            name: "Běžný nákup potravin",
+            owner: {
+                id: 1,
+                name: "Igor",
+            },
+            members: [
+                {
+                    id: 1,
+                    name: "Petr",
+                },
+                {
+                    id: 2,
+                    name: "Jana",
+                },
+                {
+                    id: 3,
+                    name: "Karel",
+                },
+                {
+                    id: 4,
+                    name: "Marie",
+                },
+            ],
+            items: [
+                {
+                    id: 1,
+                    name: "Mléko",
+                    done: true,
+                },
+                {
+                    id: 2,
+                    name: "Chléb",
+                    done: false,
+                },
+                {
+                    id: 3,
+                    name: "Máslo",
+                    done: true,
+                },
+                {
+                    id: 4,
+                    name: "Kuřecí prsa",
+                    done: true,
+                },
+                {
+                    id: 5,
+                    name: "Rýže",
+                    done: false,
+                },
+                {
+                    id: 6,
+                    name: "Těstoviny",
+                    done: true,
+                },
+            ],
+        };
+    },
+
+    //function getListName
+    getListName: () => {
+        return useDataStore.getState().shoppingList.name;
     },
 
     //function to add new member to the list
@@ -176,6 +203,18 @@ const useStore = create((set) => ({
         }));
     },
 
+    //function to leave a list as a member
+    leaveList: () => {
+        set((state) => ({
+            shoppingList: {
+                ...state.shoppingList,
+                members: state.shoppingList.members.filter(
+                    (member) => member.id !== 1
+                ),
+            },
+        }));
+    },
+
     // Add new item to the list
     addItem: (itemName) => {
         set((state) => ({
@@ -199,4 +238,4 @@ const useStore = create((set) => ({
     },
 }));
 
-export default useStore;
+export default useDataStore;

@@ -1,6 +1,6 @@
 // import { TextField, Button, Stack, Table, TableContainer } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { TextField, Button, Container, Grid } from "@mui/material";
+import { TextField, Button, Container, Grid, Typography } from "@mui/material";
 import { ErrorMessage } from "@hookform/error-message";
 
 import useStore from "../store/dataStore";
@@ -23,7 +23,7 @@ export function ShoppingListItemForm() {
 
     return (
         <Container maxWidth="sm" sx={{ mt: 4 }}>
-            <h1>Enter a new item to the list</h1>
+            <Typography variant="h5">Enter a new item to the list</Typography>
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2} mb={2}>
